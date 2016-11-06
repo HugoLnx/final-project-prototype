@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="viewport" content="user-scalable=no">
+        <link rel="icon" href="icon/icon.png" type="image/png">
+        <link rel="apple-touch-icon" href="icon/icon.png">
+        <link rel="stylesheet" type="text/css" href="fonts/gamefont.css">
+        <title>ProjetoFinal2</title>
+    </head>
+    <body style="background-color: black">
+      <script type="text/javascript" src='js/libs/fpsmeter.js'></script>
+<script type="text/javascript" src='js/libs/lz-string.js'></script>
+<script type="text/javascript" src='js/libs/pixi.js'></script>
+<script type="text/javascript" src='js/rpg_core/00_JsExtensions.js'></script>
+<script type="text/javascript" src='js/rpg_core/01_Utils.js'></script>
+<script type="text/javascript" src='js/rpg_core/02_Point.js'></script>
+<script type="text/javascript" src='js/rpg_core/03_Rectangle.js'></script>
+<script type="text/javascript" src='js/rpg_core/04_Bitmap.js'></script>
+<script type="text/javascript" src='js/rpg_core/05_Graphics.js'></script>
+<script type="text/javascript" src='js/rpg_core/06_Input.js'></script>
+<script type="text/javascript" src='js/rpg_core/07_TouchInput.js'></script>
+<script type="text/javascript" src='js/rpg_core/08_Sprite.js'></script>
+<script type="text/javascript" src='js/rpg_core/09_Tilemap.js'></script>
+<script type="text/javascript" src='js/rpg_core/10_TilingSprite.js'></script>
+<script type="text/javascript" src='js/rpg_core/11_ScreenSprite.js'></script>
+<script type="text/javascript" src='js/rpg_core/12_Window.js'></script>
+<script type="text/javascript" src='js/rpg_core/13_WindowLayer.js'></script>
+<script type="text/javascript" src='js/rpg_core/14_Weather.js'></script>
+<script type="text/javascript" src='js/rpg_core/15_ToneFilter.js'></script>
+<script type="text/javascript" src='js/rpg_core/16_ToneSprite.js'></script>
+<script type="text/javascript" src='js/rpg_core/17_Stage.js'></script>
+<script type="text/javascript" src='js/rpg_core/18_WebAudio.js'></script>
+<script type="text/javascript" src='js/rpg_core/19_Html5Audio.js'></script>
+<script type="text/javascript" src='js/rpg_core/20_JsonEx.js'></script>
+<script type="text/javascript" src='js/rpg_managers/00_DataManager.js'></script>
+<script type="text/javascript" src='js/rpg_managers/01_ConfigManager.js'></script>
+<script type="text/javascript" src='js/rpg_managers/02_StorageManager.js'></script>
+<script type="text/javascript" src='js/rpg_managers/03_ImageManager.js'></script>
+<script type="text/javascript" src='js/rpg_managers/04_AudioManager.js'></script>
+<script type="text/javascript" src='js/rpg_managers/05_SoundManager.js'></script>
+<script type="text/javascript" src='js/rpg_managers/06_TextManager.js'></script>
+<script type="text/javascript" src='js/rpg_managers/07_SceneManager.js'></script>
+<script type="text/javascript" src='js/rpg_managers/08_BattleManager.js'></script>
+<script type="text/javascript" src='js/rpg_managers/09_PluginManager.js'></script>
+<script type="text/javascript" src='js/rpg_objects/00_Game_Temp.js'></script>
+<script type="text/javascript" src='js/rpg_objects/01_Game_System.js'></script>
+<script type="text/javascript" src='js/rpg_objects/02_Game_Timer.js'></script>
+<script type="text/javascript" src='js/rpg_objects/03_Game_Message.js'></script>
+<script type="text/javascript" src='js/rpg_objects/04_Game_Switches.js'></script>
+<script type="text/javascript" src='js/rpg_objects/05_Game_Variables.js'></script>
+<script type="text/javascript" src='js/rpg_objects/06_Game_SelfSwitches.js'></script>
+<script type="text/javascript" src='js/rpg_objects/07_Game_Screen.js'></script>
+<script type="text/javascript" src='js/rpg_objects/08_Game_Picture.js'></script>
+<script type="text/javascript" src='js/rpg_objects/09_Game_Item.js'></script>
+<script type="text/javascript" src='js/rpg_objects/10_Game_Action.js'></script>
+<script type="text/javascript" src='js/rpg_objects/11_Game_ActionResult.js'></script>
+<script type="text/javascript" src='js/rpg_objects/12_Game_BattlerBase.js'></script>
+<script type="text/javascript" src='js/rpg_objects/13_Game_Battler.js'></script>
+<script type="text/javascript" src='js/rpg_objects/14_Game_Actor.js'></script>
+<script type="text/javascript" src='js/rpg_objects/15_Game_Enemy.js'></script>
+<script type="text/javascript" src='js/rpg_objects/16_Game_Actors.js'></script>
+<script type="text/javascript" src='js/rpg_objects/17_Game_Unit.js'></script>
+<script type="text/javascript" src='js/rpg_objects/18_Game_Party.js'></script>
+<script type="text/javascript" src='js/rpg_objects/19_Game_Troop.js'></script>
+<script type="text/javascript" src='js/rpg_objects/20_Game_Map.js'></script>
+<script type="text/javascript" src='js/rpg_objects/21_Game_CommonEvent.js'></script>
+<script type="text/javascript" src='js/rpg_objects/22_Game_CharacterBase.js'></script>
+<script type="text/javascript" src='js/rpg_objects/23_Game_Character.js'></script>
+<script type="text/javascript" src='js/rpg_objects/24_Game_Player.js'></script>
+<script type="text/javascript" src='js/rpg_objects/25_Game_Follower.js'></script>
+<script type="text/javascript" src='js/rpg_objects/26_Game_Followers.js'></script>
+<script type="text/javascript" src='js/rpg_objects/27_Game_Vehicle.js'></script>
+<script type="text/javascript" src='js/rpg_objects/28_Game_Event.js'></script>
+<script type="text/javascript" src='js/rpg_objects/29_Game_Interpreter.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/00_Scene_Base.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/01_Scene_Boot.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/02_Scene_Title.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/03_Scene_Map.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/04_Scene_MenuBase.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/05_Scene_Menu.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/06_Scene_ItemBase.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/07_Scene_Item.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/08_Scene_Skill.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/09_Scene_Equip.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/10_Scene_Status.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/11_Scene_Options.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/12_Scene_File.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/13_Scene_Save.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/14_Scene_Load.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/15_Scene_GameEnd.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/16_Scene_Shop.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/17_Scene_Name.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/18_Scene_Debug.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/19_Scene_Battle.js'></script>
+<script type="text/javascript" src='js/rpg_scenes/20_Scene_Gameover.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/00_Sprite_Base.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/01_Sprite_Button.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/02_Sprite_Character.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/03_Sprite_Battler.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/04_Sprite_Actor.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/05_Sprite_Enemy.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/06_Sprite_Animation.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/07_Sprite_Damage.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/08_Sprite_StateIcon.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/09_Sprite_StateOverlay.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/10_Sprite_Weapon.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/11_Sprite_Balloon.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/12_Sprite_Picture.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/13_Sprite_Timer.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/14_Sprite_Destination.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/15_Spriteset_Base.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/16_Spriteset_Map.js'></script>
+<script type="text/javascript" src='js/rpg_sprites/17_Spriteset_Battle.js'></script>
+<script type="text/javascript" src='js/rpg_windows/00_Window_Base.js'></script>
+<script type="text/javascript" src='js/rpg_windows/01_Window_Selectable.js'></script>
+<script type="text/javascript" src='js/rpg_windows/02_Window_Command.js'></script>
+<script type="text/javascript" src='js/rpg_windows/03_Window_HorzCommand.js'></script>
+<script type="text/javascript" src='js/rpg_windows/04_Window_Help.js'></script>
+<script type="text/javascript" src='js/rpg_windows/05_Window_Gold.js'></script>
+<script type="text/javascript" src='js/rpg_windows/06_Window_MenuCommand.js'></script>
+<script type="text/javascript" src='js/rpg_windows/07_Window_MenuStatus.js'></script>
+<script type="text/javascript" src='js/rpg_windows/08_Window_MenuActor.js'></script>
+<script type="text/javascript" src='js/rpg_windows/09_Window_ItemCategory.js'></script>
+<script type="text/javascript" src='js/rpg_windows/10_Window_ItemList.js'></script>
+<script type="text/javascript" src='js/rpg_windows/11_Window_SkillType.js'></script>
+<script type="text/javascript" src='js/rpg_windows/12_Window_SkillStatus.js'></script>
+<script type="text/javascript" src='js/rpg_windows/13_Window_SkillList.js'></script>
+<script type="text/javascript" src='js/rpg_windows/14_Window_EquipStatus.js'></script>
+<script type="text/javascript" src='js/rpg_windows/15_Window_EquipCommand.js'></script>
+<script type="text/javascript" src='js/rpg_windows/16_Window_EquipSlot.js'></script>
+<script type="text/javascript" src='js/rpg_windows/17_Window_EquipItem.js'></script>
+<script type="text/javascript" src='js/rpg_windows/18_Window_Status.js'></script>
+<script type="text/javascript" src='js/rpg_windows/19_Window_Options.js'></script>
+<script type="text/javascript" src='js/rpg_windows/20_Window_SavefileList.js'></script>
+<script type="text/javascript" src='js/rpg_windows/21_Window_ShopCommand.js'></script>
+<script type="text/javascript" src='js/rpg_windows/22_Window_ShopBuy.js'></script>
+<script type="text/javascript" src='js/rpg_windows/23_Window_ShopSell.js'></script>
+<script type="text/javascript" src='js/rpg_windows/24_Window_ShopNumber.js'></script>
+<script type="text/javascript" src='js/rpg_windows/25_Window_ShopStatus.js'></script>
+<script type="text/javascript" src='js/rpg_windows/26_Window_NameEdit.js'></script>
+<script type="text/javascript" src='js/rpg_windows/27_Window_NameInput.js'></script>
+<script type="text/javascript" src='js/rpg_windows/28_Window_ChoiceList.js'></script>
+<script type="text/javascript" src='js/rpg_windows/29_Window_NumberInput.js'></script>
+<script type="text/javascript" src='js/rpg_windows/30_Window_EventItem.js'></script>
+<script type="text/javascript" src='js/rpg_windows/31_Window_Message.js'></script>
+<script type="text/javascript" src='js/rpg_windows/32_Window_ScrollText.js'></script>
+<script type="text/javascript" src='js/rpg_windows/33_Window_MapName.js'></script>
+<script type="text/javascript" src='js/rpg_windows/34_Window_BattleLog.js'></script>
+<script type="text/javascript" src='js/rpg_windows/35_Window_PartyCommand.js'></script>
+<script type="text/javascript" src='js/rpg_windows/36_Window_ActorCommand.js'></script>
+<script type="text/javascript" src='js/rpg_windows/37_Window_BattleStatus.js'></script>
+<script type="text/javascript" src='js/rpg_windows/38_Window_BattleActor.js'></script>
+<script type="text/javascript" src='js/rpg_windows/39_Window_BattleEnemy.js'></script>
+<script type="text/javascript" src='js/rpg_windows/40_Window_BattleSkill.js'></script>
+<script type="text/javascript" src='js/rpg_windows/41_Window_BattleItem.js'></script>
+<script type="text/javascript" src='js/rpg_windows/42_Window_TitleCommand.js'></script>
+<script type="text/javascript" src='js/rpg_windows/43_Window_GameEnd.js'></script>
+<script type="text/javascript" src='js/rpg_windows/44_Window_DebugRange.js'></script>
+<script type="text/javascript" src='js/rpg_windows/45_Window_DebugEdit.js'></script>
+<script type="text/javascript" src='js/plugins/AltMenuScreen.js'></script>
+<script type="text/javascript" src='js/plugins/AltSaveScreen.js'></script>
+<script type="text/javascript" src='js/plugins/EnemyBook.js'></script>
+<script type="text/javascript" src='js/plugins/ItemBook.js'></script>
+<script type="text/javascript" src='js/plugins/SimpleMsgSideView.js'></script>
+<script type="text/javascript" src='js/plugins/TitleCommandPosition.js'></script>
+<script type="text/javascript" src='js/plugins/WeaponSkill.js'></script>
+<script type="text/javascript" src='js/plugins.js'></script>
+<script type="text/javascript" src='js/main.js'></script>
+    </body>
+</html>
