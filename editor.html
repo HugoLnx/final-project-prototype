@@ -30,19 +30,273 @@
         cursor: pointer;
         background: rgba(255,255,255,0.5);
       }
+
+      .event-dialog {
+        font-size: 0.8em;
+      }
+
+      .event-dialog fieldset {
+        border: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .event-dialog fieldbox {
+      display: block;
+      padding: 5px;
+      margin: 5px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      }
+
+      .field-box-title {
+        margin: 0;
+        padding: 0;
+        font-weight: bold;
+      }
+
+      .event-dialog .left-menu {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        width: 40%;
+        align-items: stretch;
+      }
+
+      .event-dialog .conditions {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .event-dialog .conditions .condition {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+      }
+
+      .event-dialog .conditions .condition .left {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: baseline;
+        width: 240px;
+      }
+
+      .event-dialog .conditions .condition select {
+        width:100%;
+      }
+
+      .event-dialog .left-menu .middle {
+        display: flex;
+        flex-direction: row;
+      }
+
+       .event-dialog .left-menu .middle .image {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .event-dialog .left-menu .middle .image-container {
+        display: flex;
+        border-radius: 5px;
+        border: 1px solid #ccf;
+        background-color: #eef;
+        height: 100%;
+      }
+
+      .event-dialog .left-menu .middle .character-image {
+        margin: 0 auto;
+        align-self: center;
+      }
+
+      .event-dialog .left-menu .middle .autonomous-movement {
+        width: 100%;
+        display: block
+      }
+
+      .event-dialog .left-menu .middle .autonomous-movement label {
+        display: block
+        width: 70px;
+      }
+
+      .event-dialog .left-menu .middle .autonomous-movement select {
+        display: block;
+        width: 100%;
+      }
+
+      .event-dialog .left-menu .bottom {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+      }
+
+      .event-dialog .left-menu .bottom .options {
+        width: 60%;
+      }
+
+      .event-dialog .left-menu .bottom select {
+        width: 100%;
+      }
+      
+      .event-dialog .left-menu .bottom-right {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .character-image {
+        width: 48px;
+        height: 48px;
+      }
     </style>
     <link type="text/css" rel="stylesheet" href="js/libs/jquery-ui-1.12.1.custom/jquery-ui.min.css">
   </head>
 
   <body>
+    <script id="event-template" type="text/x-handlebars-template">
+      <div class="left-menu">
+        <fieldbox class="conditions">
+          <p class="field-box-title">Conditions</p>
+          <fieldset class="condition">
+            <div class="left">
+              <input type="checkbox" disabled></input>
+              <label>Switch</label>
+            </div>
+            <select disabled></select>
+          </fieldset>
+          <fieldset class="condition">
+            <div class="left">
+              <input type="checkbox" disabled></input>
+              <label>Switch</label>
+            </div>
+            <select disabled></select>
+          </fieldset>
+          <fieldset class="condition">
+            <div class="left">
+              <input type="checkbox" disabled></input>
+              <label>Variable</label>
+            </div>
+            <select disabled></select>
+          </fieldset>
+          <fieldset class="condition">
+            <div class="left">
+              <input type="checkbox" disabled></input>
+              <label>Self-Switch</label>
+            </div>
+            <select disabled></select>
+          </fieldset>
+          <fieldset class="condition">
+            <div class="left">
+              <input type="checkbox" disabled></input>
+              <label>Item</label>
+            </div>
+            <select disabled></select>
+          </fieldset>
+          <fieldset class="condition">
+            <div class="left">
+              <input type="checkbox" disabled></input>
+              <label>Weapon</label>
+            </div>
+            <select disabled></select>
+          </fieldset>
+        </fieldbox>
+
+        <div class="middle">
+          <fieldbox class="image">
+            <p class="field-box-title">Image</p>
+            <div class="image-container">
+              <div class="character-image" style='background: url("{{image.path}}") -{{image.x}}px -{{image.y}}px'></div>
+            </div>
+          </fieldbox>
+          <fieldbox class="autonomous-movement">
+            <p class="field-box-title">Autonomous Movement</p>
+            <fieldset>
+              <label>Type</label>
+              <select>
+                <option>Fixed</option>
+                <option>Random</option>
+                <option>Approach</option>
+                <option>Custom</option>
+              </select>
+            </fieldset>
+            <fieldset>
+              <label>Speed</label>
+              <select>
+                <option>8x Slower</option>
+                <option>4x Slower</option>
+                <option>2x Slower</option>
+                <option>Normal</option>
+                <option>2x Faster</option>
+                <option>4x Faster</option>
+              </select>
+            </fieldset>
+            <fieldset>
+              <label>Freq</label>
+              <select>
+                <option>Lowest</option>
+                <option>Lower</option>
+                <option>Normal</option>
+                <option>Higher</option>
+                <option>Highest</option>
+              </select>
+            </fieldset>
+          </fieldbox>
+        </div>
+
+        <div class="bottom">
+          <fieldbox class="options">
+            <p class="field-box-title">Options</p>
+            <fieldset>
+              <input type="checkbox" checked></input>
+              <label>Walking</label>
+            </fieldset>
+            <fieldset>
+              <input type="checkbox"></input>
+              <label>Stepping</label>
+            </fieldset>
+            <fieldset>
+              <input type="checkbox"></input>
+              <label>Direction Fix</label>
+            </fieldset>
+            <fieldset>
+              <input type="checkbox"></input>
+              <label>Through</label>
+            </fieldset>
+          </fieldbox>
+          <div class="bottom-right">
+            <fieldbox class="priority">
+              <p class="field-box-title">Priority</p>
+              <select>
+                <option>Below characters</option>
+                <option>Same as characters</option>
+                <option>Above characters</option>
+              </select>
+            </fieldbox>
+            <fieldbox class="trigger">
+              <p class="field-box-title">Trigger</p>
+              <select>
+                <option>Action Button</option>
+                <option>Player Touch</option>
+                <option>Event Touch</option>
+                <option>Autorun</option>
+                <option>Parallel</option>
+              </select>
+            </fieldbox>
+          </div>
+        </div>
+      </div>
+    </script>
+
     <div id="map-container">
       <div id="map">
-        <img src="img/map.png" width="480px"></img>
+        <img src="img/map.png" width="480px">
       </div>
     </div>
-    <div id="heyho">LETS GO!!</div>
     <script src="js/libs/jquery-2.2.4.min.js"></script>
     <script src="js/libs/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+    <script src="js/libs/handlebars-v4.0.5.js"></script>
     <script src="js/editor.js"></script>
   </body>
 </html>
