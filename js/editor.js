@@ -64,7 +64,8 @@ var eventDialog = {
     }));
     this.element.dialog("option", "title", "Event ID: " + ev.data.id);
     this.element.dialog("open");
-    $(".commands").sortable({
+    var commands = $(".commands");
+    commands.sortable({
       connectWith: ".commands",
       dropOnEmpty: true,
       placeholder: "ui-state-highlight",
@@ -74,12 +75,42 @@ var eventDialog = {
       tolerance: "intersect",
       scroll: false
     });
+    onCommandMove(commands, function(details) {
+      var itemId = details.item.data("id");
+      var senderCollection = Commands.collectionById[details.sender.data("id")];
+      var receiverCollection = Commands.collectionById[details.receiver.data("id")];
+      var inx = details.item.prevAll(".command").length;
+      senderCollection.all._removeIf(function(command){return command.id === itemId;});
+      receiverCollection.all._insertAt(inx, Commands.commandById[itemId]);
+    });
   },
   apply: function() {
   },
   close: function() {
     this.element.dialog("close");
   }
+};
+
+function onCommandMove(commands, action) {
+  var intervals = {};
+
+  commands.on("sortupdate", function(event, ui) {
+    var item = ui.item;
+    var itemId = item.data("id");
+    clearInterval(intervals[itemId]);
+
+    intervals[itemId] = setTimeout(function() {
+      delete intervals[itemId];
+      var sender = ui.sender;
+      var receiver = $(event.target);
+      var details = {
+        item: item,
+        sender: sender || receiver,
+        receiver: receiver
+      };
+      action(details);
+    }, 200);
+  });
 };
 
 function imagePropertiesFrom(image) {
@@ -307,3 +338,27 @@ HtmlCreators.Default = {
       event.currentTarget.classList.remove("hovered");
   });
 }());
+
+Array.prototype._insertAt = function() {
+  var params = [];
+  for(var i = 0; i<arguments.length; i++) {
+    var argument = arguments[i];
+    params.push(argument);
+  }
+  params.splice(1,0,0);
+  Array.prototype.splice.apply(this, params);
+};
+
+Array.prototype._remove = function(position) {
+  Array.prototype.splice.call(this, position, 1);
+};
+
+Array.prototype._removeIf = function(condition) {
+  for(var i = 0; i<this.length; i++) {
+    var element = this[i];
+    if(condition(element)) {
+      this._remove(i);
+      break;
+    }
+  }
+};
