@@ -17,6 +17,31 @@ for(var i = 1; i<dataMap.events.length; i++) {
   events[i] = {data: ev, div: div};
 }
 
+var Commands = {
+  nextCommandId: 0,
+  commandById: {},
+  nextCollectionId: 0,
+  collectionById: {},
+  build: function(type, props){
+    var id = this.nextCommandId++;
+    var obj = {id: id, command: type};
+    for(var prop in props) {
+      if(prop.hasOwnProperty(prop)) {
+        obj[prop] = props[prop];
+      }
+    }
+    this.commandById[id] = obj;
+    return obj;
+  },
+  buildCollection: function() {
+    var id = this.nextCollectionId++;
+    var objs = {all: [], id: id};
+    this.collectionById[id] = objs;
+    objs.id = id;
+    return objs;
+  }
+}
+
 var eventDialog = {
   element: null,
   ev: null,
@@ -75,9 +100,11 @@ function commandsFrom(commands) {
 CommandParsers = {};
 
 CommandParsers.parse = function(commands, i) {
-  var objects = [];
   var command = commands[i];
-  if(command === undefined) return {commands: [], nextI: null};
+  if(command === undefined) return {commands: null, nextI: null};
+
+  var objects = Commands.buildCollection();
+
   if(commands[commands.length-1].code === 0) {
     commands.pop();
   }
@@ -85,7 +112,7 @@ CommandParsers.parse = function(commands, i) {
   var indent = command.indent;
   while(i != null && i < commands.length && indent === commands[i].indent) {
     var resp = CommandParsers.parseOne(commands, i);
-    objects.push(resp.object);
+    objects.all.push(resp.object);
 
     i = resp.nextI;
   }
@@ -113,11 +140,10 @@ CommandParsers.ShowText = {
     var text = nextCommand.parameters[0];
     var match = text.match(/^([^:]*)\s*:\s*(.*)$/)
 
-    var obj = {
-      command: "ShowText",
+    var obj = Commands.build("ShowText", {
       name: (match ? match[1] : ""),
       text: (match ? match[2] : text)
-    };
+    });
 
     var nextI = nextNextCommand.code === 0 ? i + 3 : i + 2;
     return {object: obj, nextI: nextI};
@@ -130,11 +156,10 @@ CommandParsers.ControlVariables = {
     var params = commands[i].parameters;
     var operators = ["=", "+", "-", "*", "/", "%"];
 
-    var obj = {
-      command: "ControlVariables",
+    var obj = Commands.build("ControlVariables", {
       ids_range: [params[0], params[1]],
       operator: operators[params[2]]
-    };
+    });
 
     switch (params[3]) {  // Operand
     case 0:  // Constant
@@ -160,9 +185,7 @@ CommandParsers.ConditionalBranch = {
   parse: function(commands, i) {
     // 111
     var params = commands[i].parameters;
-    var obj = {
-      command: "ConditionalBranch",
-    };
+    var obj = Commands.build("ConditionalBranch");
     switch (params[0]) {
     case 0:  // Switch
         obj.type = "Switch";
@@ -219,12 +242,13 @@ Handlebars.registerHelper("commands-list", function(commands) {
   return new Handlebars.SafeString(HtmlCreators.htmlFor(commands));
 });
 
-HtmlCreators = {lastId: 0}
+HtmlCreators = {};
 HtmlCreators.htmlFor = function(commands) {
-  var ul = "<ul class='commands'>";
-  for(var i = 0; i<commands.length; i++) {
-    var command = commands[i];
-    ul += "<li class='command' data-id='" + (++HtmlCreators.lastId) + "'>";
+  var all = commands.all;
+  var ul = "<ul class='commands' data-id='" + commands.id + "'>";
+  for(var i = 0; i<all.length; i++) {
+    var command = all[i];
+    ul += "<li class='command' data-id='" + command.id + "'>";
     ul += HtmlCreators.htmlForOne(command);
     ul += "</li>"; 
   }
