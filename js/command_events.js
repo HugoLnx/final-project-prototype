@@ -78,3 +78,13 @@ function onCommandMove(commands, action) {
       event.currentTarget.classList.remove("hovered");
   });
 }());
+
+$(".event-dialog").on("click", ".add-command", function(event) {
+  var obj = Commands.build("ShowText", {
+    name: "A jude",
+    text: "A very fucking cool text"
+  });
+  var collectionId = $(this).data("collection-id");
+  Commands.collectionById[collectionId].all.push(obj);
+  $("#commands-" + collectionId).append(HtmlCreators.htmlForOne(obj));
+});

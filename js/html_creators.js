@@ -1,12 +1,10 @@
 HtmlCreators = {};
 HtmlCreators.htmlFor = function(commands) {
   var all = commands.all;
-  var ul = "<ul class='commands' data-id='" + commands.id + "'>";
+  var ul = "<ul id='commands-"+ commands.id +"' class='commands' data-id='" + commands.id + "'>";
   for(var i = 0; i<all.length; i++) {
     var command = all[i];
-    ul += "<li class='command' data-id='" + command.id + "'>";
     ul += HtmlCreators.htmlForOne(command);
-    ul += "</li>"; 
   }
   ul += "</ul>";
   ul += "<div class='add-command' data-collection-id='" + commands.id + "'><button>Add Command</button></div>"
@@ -14,7 +12,10 @@ HtmlCreators.htmlFor = function(commands) {
 }
 
 HtmlCreators.htmlForOne = function(command) {
-  return (HtmlCreators[command.command] || HtmlCreators.Default).htmlFor(command);
+  var html = "<li class='command' data-id='" + command.id + "'>";
+  html += (HtmlCreators[command.command] || HtmlCreators.Default).htmlFor(command);
+  html += "</li>"; 
+  return html;
 };
 
 HtmlCreators.ConditionalBranch = {
