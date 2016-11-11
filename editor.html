@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8"/>
     <style>
-      div,body,html,p{margin:0;padding:0;}
+      div,body,html,p,ul,li{margin:0;padding:0;}
       *{box-sizing: border-box;}
+      ul,li{list-style: none;}
 
       body {
         background: black;
@@ -65,8 +66,14 @@
         width: 100%;
       }
 
-      .event-dialog .commands {
-        list-style: none;
+      .event-dialog .commands,
+      .event-dialog .add-command {
+        margin-left: 30px;
+      }
+
+      .event-dialog .add-command,
+      .event-dialog .add-command * {
+        cursor: pointer;
       }
 
       .event-dialog .commands-area .command {
@@ -336,6 +343,12 @@
     <script src="js/libs/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
     <script src="js/libs/handlebars-v4.0.5.js"></script>
     <script src="js/editor.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/event_dialog_view.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/command_events.js"></script>
+    <script src="js/command_parsers.js"></script>
+    <script src="js/html_creators.js"></script>
   </body>
 </html>
 
