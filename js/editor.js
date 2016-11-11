@@ -26,7 +26,7 @@ var Commands = {
     var id = this.nextCommandId++;
     var obj = {id: id, command: type};
     for(var prop in props) {
-      if(prop.hasOwnProperty(prop)) {
+      if(props.hasOwnProperty(prop)) {
         obj[prop] = props[prop];
       }
     }
@@ -82,6 +82,10 @@ var eventDialog = {
       var inx = details.item.prevAll(".command").length;
       senderCollection.all._removeIf(function(command){return command.id === itemId;});
       receiverCollection.all._insertAt(inx, Commands.commandById[itemId]);
+      //console.log(CommandParsers.unparse(window.commands, 0));
+      var dataMap = JSON.parse(localStorage['$dataMap']);
+      dataMap.events[5].pages[0].list = CommandParsers.unparse(window.commands, 0);
+      localStorage['$dataMap'] = JSON.stringify(dataMap);
     });
   },
   apply: function() {
@@ -122,9 +126,8 @@ function imagePropertiesFrom(image) {
 }
 
 function commandsFrom(commands) {
-  resp = CommandParsers.parse(commands, 0);
+  var resp = CommandParsers.parse(commands, 0);
   window.commands = resp.commands;
-  console.log(resp.commands);
   return resp.commands;
 }
 
@@ -136,18 +139,16 @@ CommandParsers.parse = function(commands, i) {
 
   var objects = Commands.buildCollection();
 
-  if(commands[commands.length-1].code === 0) {
-    commands.pop();
-  }
-
   var indent = command.indent;
-  while(i != null && i < commands.length && indent === commands[i].indent) {
+  while(i !== null && commands[i].code !== 0) {
     var resp = CommandParsers.parseOne(commands, i);
     objects.all.push(resp.object);
 
     i = resp.nextI;
   }
-  return {commands: objects, nextI: i};
+  var nextI = i+1;
+  if(nextI >= commands.length) nextI = null;
+  return {commands: objects, nextI: nextI};
 };
 
 CommandParsers.parseOne = function(commands, i) {
@@ -164,22 +165,52 @@ CommandParsers.parseOne = function(commands, i) {
   return resp;
 }
 
+CommandParsers.unparse = function(collection, indent) {
+  var objects = collection.all;
+  var commands = [];
+  for(var i = 0; i<objects.length; i++) {
+    var object = objects[i];
+    var newCommands = CommandParsers[object.command].unparse(object, indent);
+    Array.prototype.push.apply(commands, newCommands);
+  }
+  commands.push({
+    "code": 0,
+    "indent": indent,
+    "parameters": []
+  });
+  return commands;
+};
+
 CommandParsers.ShowText = {
   parse: function(commands, i) {
     var nextCommand = commands[i+1];
-    var nextNextCommand = commands[i+2];
     var text = nextCommand.parameters[0];
     var match = text.match(/^([^:]*)\s*:\s*(.*)$/)
 
     var obj = Commands.build("ShowText", {
-      name: (match ? match[1] : ""),
+      name: (match ? match[1] : null),
       text: (match ? match[2] : text)
     });
 
-    var nextI = nextNextCommand.code === 0 ? i + 3 : i + 2;
-    return {object: obj, nextI: nextI};
+    return {object: obj, nextI: i + 2};
+  },
+  unparse: function(obj, indent) {
+    var commands = [];
+    commands.push({
+      "code": 101,
+      "indent": indent,
+      "parameters": ["", 0, 0, 2]
+    });
+    commands.push({
+      "code": 401,
+      "indent": indent,
+      "parameters": [
+        (obj.name ? obj.name + ": " : "") + obj.text
+      ]
+    });
+    return commands;
   }
-}
+};
 
 CommandParsers.ControlVariables = {
   parse: function(commands, i) {
@@ -188,7 +219,7 @@ CommandParsers.ControlVariables = {
     var operators = ["=", "+", "-", "*", "/", "%"];
 
     var obj = Commands.build("ControlVariables", {
-      ids_range: [params[0], params[1]],
+      idsRange: [params[0], params[1]],
       operator: operators[params[2]]
     });
 
@@ -209,6 +240,26 @@ CommandParsers.ControlVariables = {
     }
 
     return {object: obj, nextI: i + 1};
+  },
+  unparse: function(obj, indent) {
+    var operatorIndexes = {"=" : 0, "+" : 1, "-" : 3, "*" : 4, "/" : 5, "%" : 6};
+    var code = 122;
+    var params = [];
+    params[0] = obj.idsRange[0];
+    params[1] = obj.idsRange[1];
+    params[2] = operatorIndexes[obj.operator];
+    if(obj.type === "Constant") {
+      params[3] = 0;
+      params[4] = obj.value;
+    } else if(obj.type === "Variable") {
+      params[3] = 1;
+      params[4] = obj.variableId;
+    } else if(obj.type === "Random") {
+      params[3] = 2;
+      params[4] = obj.min;
+      params[5] = obj.max;
+    }
+    return [{code: code, parameters: params, indent: indent}];
   }
 };
 
@@ -234,14 +285,14 @@ CommandParsers.ConditionalBranch = {
             obj.right.value = params[2];
         } else {
             obj.right.type = "Variable";
-            obj.right.variable_id = params[2];
+            obj.right.variableId = params[2];
         }
         var operators = ["=", ">=", "<=", ">", "<", "<>"];
         obj.operator = operators[params[4]];
         break;
     case 2:  // Self Switch
         obj.type = "SelfSwitch";
-        obj.switch_key = params[1];
+        obj.switchKey = params[1];
         break;
     case 3:  // Timer
         obj.type = "Timer";
@@ -251,14 +302,69 @@ CommandParsers.ConditionalBranch = {
     }
 
     var resp = CommandParsers.parse(commands, i+1);
-    obj.then_children = resp.commands;
+    obj.thenChildren = resp.commands;
 
     if(commands[resp.nextI].code === 411) {
       resp = CommandParsers.parse(commands, resp.nextI+1);
-      obj.else_children = resp.commands;
+      obj.elseChildren = resp.commands;
     }
 
     return {object: obj, nextI: resp.nextI+1};
+  },
+  unparse: function(obj, indent) {
+    var commands = [];
+    var params = [];
+
+    if(obj.type === "Switch") {
+      params[0] = 0;
+      params[1] = obj.switches[0];
+      params[2] = obj.switches[1];
+    } else if(obj.type === "Variable") {
+      params[0] = 1;
+      params[1] = obj.left.variableId;
+      if(obj.right.type === "Constant") {
+        params[2] = 0;
+        params[3] = obj.right.value;
+      } else {
+        params[2] = 1;
+        params[3] = obj.right.variableId;
+      }
+      var operatorIndexes = {"=":0, ">=":1, "<=":2, ">":3, "<":4, "<>":5};
+      params[4] = operatorIndexes[obj.operator];
+    } else if(obj.type === "SelfSwitch") {
+      params[0] = 2;
+      params[1] = obj.switchKey;
+    } else if(obj.type === "Timer") {
+      params[0] = 3;
+      params[1] = obj.seconds;
+      params[2] = (obj.operator === ">=" ? 0 : 1);
+    }
+
+    commands.push({
+      "code": 111,
+      "indent": indent,
+      "parameters": params
+    });
+
+    var thenCommands = CommandParsers.unparse(obj.thenChildren, indent+1);
+    Array.prototype.push.apply(commands, thenCommands);
+
+    if(obj.elseChildren.all.length > 0) {
+      commands.push({
+        "code": 411,
+        "indent": indent,
+        "parameters": []
+      });
+
+      var elseCommands = CommandParsers.unparse(obj.elseChildren, indent+1);
+      Array.prototype.push.apply(commands, elseCommands);
+    }
+    commands.push({
+      "code": 412,
+      "indent": indent,
+      "parameters": []
+    });
+    return commands;
   }
 };
 
@@ -297,12 +403,12 @@ HtmlCreators.ConditionalBranch = {
     html += "<ul class='branches'>";
     html += "<li class='branch'>";
     html += "<p class='branch-title'>Then</p>";
-    html += HtmlCreators.htmlFor(command.then_children);
+    html += HtmlCreators.htmlFor(command.thenChildren);
     html += "</li>";
-    if (command.else_children !== undefined) {
+    if (command.elseChildren !== undefined) {
       html += "<li class='branch'>";
       html += "<p class='branch-title'>Else</p>";
-      html += HtmlCreators.htmlFor(command.else_children);
+      html += HtmlCreators.htmlFor(command.elseChildren);
       html += "</li>";
     }
     html += "</ul>"
@@ -362,3 +468,11 @@ Array.prototype._removeIf = function(condition) {
     }
   }
 };
+
+function toClipboard(text) {
+  var div = document.createElement("div");
+  div.textContent = text;
+  div.focus();
+  document.execCommand("SelectAll");
+  document.execCommand("Copy");
+}
