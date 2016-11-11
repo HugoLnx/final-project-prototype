@@ -11,6 +11,10 @@ for(var i = 1; i<dataMap.events.length; i++) {
 }
 
 ELEMENTS.map.on("click", ".map-event", function(ev) {
+  var dataMap = JSON.parse(localStorage['$dataMap']);
+  for(var i = 1; i<dataMap.events.length; i++) {
+    events[i].data = dataMap.events[i];
+  }
   var eventId = $(ev.target).data("id");
   EventDialog.openFor(events[eventId]);
 });

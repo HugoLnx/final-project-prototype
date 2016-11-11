@@ -22,3 +22,9 @@ var Commands = {
     return objs;
   }
 }
+
+function saveDataMap() {
+  var dataMap = JSON.parse(localStorage['$dataMap']);
+  dataMap.events[window.currentEventId].pages[0].list = CommandParsers.unparse(window.commands, 0);
+  localStorage['$dataMap'] = JSON.stringify(dataMap);
+}

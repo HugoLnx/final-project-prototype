@@ -65,17 +65,20 @@
   ];
   var _element = null;
   var _template = Handlebars.compile($("#commands-picker-template").html());
+  var _currentCallback = null;
 
   CommandsPicker = {
     initialize: function() {
       createCommandModelMenus();
       initializeDialog();
+      bindEvents();
     },
     getElement: function() {
       if (_element === null) _element = $(SELECTOR);
       return _element;
     },
     pickCommand: function(callback) {
+      _currentCallback = callback;
       CommandsPicker.getElement().dialog("open");
     }
   };
@@ -93,6 +96,16 @@
       resizable: false,
       width: 550,
       height: 600
+    });
+  }
+
+  function bindEvents() {
+    CommandsPicker.getElement().on("click", ".command-model button", function(event) {
+      var btn = $(this);
+      var type = btn.data("command");
+      CommandModelDialogs.open(type, {}, function(obj) {
+        _currentCallback(obj);
+      });
     });
   }
 

@@ -41,6 +41,16 @@
         font-size: 0.8em;
       }
 
+      .event-dialog .finishing-buttons {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .event-dialog .finishing-buttons button {
+        margin-left: 10px;
+        width: 100px;
+      }
+
       .event-dialog fieldset {
         border: none;
         margin: 0;
@@ -329,6 +339,10 @@
           </div>
         </div>
       </div>
+      <div class="finishing-buttons">
+        <button class="ok">Ok</button>
+        <button class="cancel">Cancel</button>
+      </div>
     </script>
 
     <script id="commands-picker-template" type="text/x-handlebars-template">
@@ -360,6 +374,23 @@
       </ul>
     </div>
 
+    <div id="command-model-ShowText" class="command-model-dialog" data-type="ShowText">
+      <div>
+        <p>
+          <label>Speaker</label>
+          <input class="name"></input>
+        </p>
+        <p>
+          <label>Message</label>
+          <input class="text"></input>
+        </p>
+      </div>
+      <div class="finishing-buttons">
+        <button class="ok">Ok</button>
+        <button class="cancel">Cancel</button>
+      </div>
+    </div>
+
     <div class='event-dialog'></div>
     <script src="js/libs/jquery-2.2.4.min.js"></script>
     <script src="js/libs/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
@@ -368,6 +399,7 @@
     <script src="js/utils.js"></script>
     <script src="js/event_dialog_view.js"></script>
     <script src="js/commands_picker.js"></script>
+    <script src="js/command_model_dialogs.js"></script>
     <script src="js/map.js"></script>
     <script src="js/command_events.js"></script>
     <script src="js/command_parsers.js"></script>

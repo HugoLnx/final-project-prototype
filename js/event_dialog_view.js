@@ -21,10 +21,14 @@ var EventDialog = {
   openFor: function(ev) {
     this.ev = ev;
     var firstpage = ev.data.pages[0];
+    var commands = commandsFrom(firstpage.list);
     this.element.html(eventTemplate({
       image: imagePropertiesFrom(firstpage.image),
-      commands: commandsFrom(firstpage.list)
+      commands: commands
     }));
+
+    window.commands = commands;
+    window.currentEventId = ev.data.id;
     this.element.dialog("option", "title", "Event ID: " + ev.data.id);
     this.element.dialog("open");
     CommandEvents.bind();
@@ -46,7 +50,6 @@ function imagePropertiesFrom(image) {
 
 function commandsFrom(commands) {
   var resp = CommandParsers.parse(commands, 0);
-  window.commands = resp.commands;
   return resp.commands;
 }
 
