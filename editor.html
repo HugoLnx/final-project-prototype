@@ -11,6 +11,10 @@
         background: black;
       }
 
+      button {
+        cursor: pointer;
+      }
+
       #map-container {
         padding: 20px;
       }
@@ -69,11 +73,6 @@
       .event-dialog .commands,
       .event-dialog .add-command {
         margin-left: 30px;
-      }
-
-      .event-dialog .add-command,
-      .event-dialog .add-command * {
-        cursor: pointer;
       }
 
       .event-dialog .commands-area .command {
@@ -332,10 +331,33 @@
       </div>
     </script>
 
+    <script id="commands-picker-template" type="text/x-handlebars-template">
+      {{#each commandModelGroups}}
+      <li>
+        <p class="command-model-group-title">{{title}}</p>
+        <ul class="commands-models">
+          {{#each commandModels}}
+          <li class="command-model">
+            <button data-command="{{command}}">{{title}}</button>
+          </li>
+          {{~/each}}
+        </ul>
+      </li>
+      {{~/each}}
+    </script>
+
     <div id="map-container">
       <div id="map">
         <img src="img/map.png" width="480px">
       </div>
+    </div>
+
+    <div id="commands-picker-dialog">
+      <div class="commands-search">
+        <input type="search">
+      </div>
+      <ul class="command-model-groups">
+      </ul>
     </div>
 
     <div class='event-dialog'></div>
@@ -345,6 +367,7 @@
     <script src="js/editor.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/event_dialog_view.js"></script>
+    <script src="js/commands_picker.js"></script>
     <script src="js/map.js"></script>
     <script src="js/command_events.js"></script>
     <script src="js/command_parsers.js"></script>
