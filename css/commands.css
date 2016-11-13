@@ -1,0 +1,17 @@
+.commands,
+.add-command {
+  margin-left: 30px;
+}
+
+.commands-area .command {
+  padding: 5px;
+  border: 1px solid rgba(0,0,0,0);
+  cursor: grab;
+}
+
+.commands-area .command.hovered {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: rgba(180,180,220,0.2);
+  color: #212121;
+}

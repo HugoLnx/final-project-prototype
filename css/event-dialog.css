@@ -1,0 +1,138 @@
+.event-dialog {
+  font-size: 0.8em;
+}
+
+.event-dialog .finishing-buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.event-dialog .finishing-buttons button {
+  margin-left: 10px;
+  width: 100px;
+}
+
+.event-dialog fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.event-dialog .area {
+display: block;
+padding: 5px;
+margin: 5px;
+border-radius: 10px;
+border: 1px solid #ccc;
+}
+
+.area-title {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+}
+
+.event-window-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.event-dialog .left-menu {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  align-items: stretch;
+}
+
+.event-dialog .conditions {
+  display: flex;
+  flex-direction: column;
+}
+
+.event-dialog .commands-area {
+  width: 100%;
+}
+
+.event-dialog .conditions .condition {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.event-dialog .conditions .condition .left {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: baseline;
+  width: 240px;
+}
+
+.event-dialog .conditions .condition select {
+  width:100%;
+}
+
+.event-dialog .left-menu .middle {
+  display: flex;
+  flex-direction: row;
+}
+
+ .event-dialog .left-menu .middle .image {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-dialog .left-menu .middle .image-container {
+  display: flex;
+  border-radius: 5px;
+  border: 1px solid #ccf;
+  background-color: #eef;
+  height: 100%;
+}
+
+.event-dialog .left-menu .middle .character-image {
+  margin: 0 auto;
+  align-self: center;
+}
+
+.event-dialog .left-menu .middle .autonomous-movement {
+  width: 100%;
+  display: block
+}
+
+.event-dialog .left-menu .middle .autonomous-movement label {
+  display: block
+  width: 70px;
+}
+
+.event-dialog .left-menu .middle .autonomous-movement select {
+  display: block;
+  width: 100%;
+}
+
+.event-dialog .left-menu .bottom {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.event-dialog .left-menu .bottom .options {
+  width: 60%;
+}
+
+.event-dialog .left-menu .bottom select {
+  width: 100%;
+}
+
+.event-dialog .left-menu .bottom-right {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.character-image {
+  width: 48px;
+  height: 48px;
+}
