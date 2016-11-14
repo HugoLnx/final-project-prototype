@@ -1,3 +1,4 @@
+/* COMMANDS AREA */
 .commands,
 .add-command {
   margin-left: 30px;
@@ -14,4 +15,83 @@
   border-radius: 5px;
   background: rgba(180,180,220,0.2);
   color: #212121;
+}
+
+/* COMMAND MODELS LIST */
+#commands-picker-dialog {
+  padding: 0;
+}
+
+#commands-picker-dialog .commands-search {
+  display: flex;
+  padding: .5em .5em 0 .5em;
+}
+
+#commands-picker-dialog .commands-search input {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px 0 0 5px;
+  padding: 12px 24px;
+  color: #555;
+}
+
+#commands-picker-dialog .commands-search button {
+  width: 60px;
+  height: 48px;
+  border: 1px solid #ccc;
+  border-left: none;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  background-color: white;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#commands-picker-dialog .commands-search button:hover {
+  background-color: #eee;
+}
+
+#commands-picker-dialog .commands-search svg {
+  display: block;
+  align-self: middle;
+  width: 32px;
+  height: 32px;
+  fill: #555;
+  margin: 0 auto;
+}
+
+#commands-picker-dialog .commands-models {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#commands-picker-dialog .commands-models {
+  padding: 0 .5em;
+}
+
+#commands-picker-dialog .commands-models .command-model {
+  width: 23%;
+  height: 100px;
+  margin: 5px;
+}
+
+#commands-picker-dialog .commands-models .command-model button {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#commands-picker-dialog .command-model-group-title {
+  background-color: #eee;
+  padding: .5em 1em;
+  margin-top: 1em;
+  margin-left: .2em;
+  font-weight: bold;
+  color: #aaa;
+  text-shadow: 2px 2px 3px #fff;
+  border-radius: 100px 500px 100px 100px;
+  width: 75%;
 }

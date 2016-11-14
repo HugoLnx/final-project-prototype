@@ -8,6 +8,18 @@ body {
 
 button {
   cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 0.7em;
+  color: #333;
+  background-color: white;
+  padding: 1px 10px;
+}
+input, button {
+  box-shadow: 1px 1px 1px #ccc;
+}
+
+button:hover {
+  background-color: #eee;
 }
 
 #map-container {
