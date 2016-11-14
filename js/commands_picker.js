@@ -105,6 +105,7 @@
       var type = btn.data("command");
       CommandModelDialogs.open(type, {}, function(obj) {
         _currentCallback(obj);
+        CommandsPicker.getElement().dialog("close");
       });
     });
   }
