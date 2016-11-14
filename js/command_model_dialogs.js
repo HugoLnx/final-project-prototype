@@ -10,11 +10,11 @@
       var modelDialog = CommandModelDialogs[modelType];
       elementsByType[modelType] = element;
       element.dialog({
+        title: modelDialog.title,
         autoOpen: false,
         modal: true,
         resizable: false,
-        width: modelDialog.width,
-        height: modelDialog.height
+        width: modelDialog.width
       });
       element.on("click", ".ok", function(event) {
         var data = modelDialog.getDataFrom(element);
@@ -38,8 +38,8 @@
   };
 
   CommandModelDialogs.ShowText = {
+    title: "Show Text",
     width: 300,
-    height: 300,
     getDataFrom: function(dialogElement) {
       return Commands.build("ShowText", {
         name: dialogElement.find(".name").val(),

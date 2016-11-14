@@ -1,0 +1,8 @@
+.command-model-dialog .finishing-buttons {
+  padding-top: 10px;
+}
+
+.command-model-dialog.small-dialog .finishing-buttons {
+  display: flex;
+  justify-content: space-around;
+}

@@ -22,6 +22,16 @@ button:hover {
   background-color: #eee;
 }
 
+.finishing-buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.finishing-buttons button {
+  margin-left: 1%;
+  width: 100px;
+}
+
 #map-container {
   padding: 20px;
 }

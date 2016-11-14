@@ -2,16 +2,6 @@
   font-size: 0.8em;
 }
 
-.event-dialog .finishing-buttons {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.event-dialog .finishing-buttons button {
-  margin-left: 10px;
-  width: 100px;
-}
-
 .event-dialog fieldset {
   border: none;
   margin: 0;
