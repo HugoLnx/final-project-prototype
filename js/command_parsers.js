@@ -83,7 +83,7 @@ CommandParsers.ControlVariables = {
   parse: function(commands, i) {
     // 122
     var params = commands[i].parameters;
-    var operators = ["=", "+", "-", "*", "/", "%"];
+    var operators = ["=", "+=", "-=", "*=", "/=", "%="];
 
     var obj = Commands.build("ControlVariables", {
       idsRange: [params[0], params[1]],
@@ -109,7 +109,7 @@ CommandParsers.ControlVariables = {
     return {object: obj, nextI: i + 1};
   },
   unparse: function(obj, indent) {
-    var operatorIndexes = {"=" : 0, "+" : 1, "-" : 3, "*" : 4, "/" : 5, "%" : 6};
+    var operatorIndexes = {"=" : 0, "+=" : 1, "-=" : 3, "*=" : 4, "/=" : 5, "%=" : 6};
     var code = 122;
     var params = [];
     params[0] = obj.idsRange[0];
@@ -138,7 +138,8 @@ CommandParsers.ConditionalBranch = {
     switch (params[0]) {
     case 0:  // Switch
         obj.type = "Switch";
-        obj.switches = [params[1], params[2]];
+        obj.leftSwitch = params[1];
+        obj.rightValue = params[2];
         break;
     case 1:  // Variable
         obj.type = "Variable";
@@ -159,7 +160,8 @@ CommandParsers.ConditionalBranch = {
         break;
     case 2:  // Self Switch
         obj.type = "SelfSwitch";
-        obj.switchKey = params[1];
+        obj.leftSwitch = params[1];
+        obj.rightValue = params[2]
         break;
     case 3:  // Timer
         obj.type = "Timer";
@@ -184,8 +186,8 @@ CommandParsers.ConditionalBranch = {
 
     if(obj.type === "Switch") {
       params[0] = 0;
-      params[1] = obj.switches[0];
-      params[2] = obj.switches[1];
+      params[1] = obj.leftSwitch;
+      params[2] = obj.rightValue;
     } else if(obj.type === "Variable") {
       params[0] = 1;
       params[1] = obj.left.variableId;
@@ -200,7 +202,8 @@ CommandParsers.ConditionalBranch = {
       params[4] = operatorIndexes[obj.operator];
     } else if(obj.type === "SelfSwitch") {
       params[0] = 2;
-      params[1] = obj.switchKey;
+      params[1] = obj.leftSwitch;
+      params[2] = obj.rightValue;
     } else if(obj.type === "Timer") {
       params[0] = 3;
       params[1] = obj.seconds;

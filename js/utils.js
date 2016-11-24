@@ -22,6 +22,14 @@ Array.prototype._removeIf = function(condition) {
   }
 };
 
+Number.prototype._format = function(minIntegerDigits) {
+  var str = this+"";
+  while(str.length < minIntegerDigits) {
+    str = "0" + str;
+  }
+  return str;
+};
+
 function toClipboard(text) {
   var div = document.createElement("div");
   div.textContent = text;
