@@ -1,20 +1,72 @@
 /* COMMANDS AREA */
-.commands,
-.add-command {
-  margin-left: 30px;
+.commands-container {margin: 0; padding: 0;}
+
+.event-dialog .commands-area .commands-container *,
+.event-dialog .area.commands-area {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
-.commands-area .command {
+.commands {
+  margin-left: 1.6em;
+}
+
+.event-dialog .commands-area .commands-container .line,
+.event-dialog .commands-area .area-title {
+  height: 29px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.event-dialog .commands-area .commands-container .line.command-header {
+  height: 27px;
+}
+
+.commands-area {
+  background: url("/img/commands-back.png");
+}
+
+.commands {
+  margin-left: 1.6em;
+}
+
+.add-command {
+  margin-left: 2.2em;
+}
+
+.commands-container > .commands {
+  margin-left: 0;
+}
+
+.commands-container > .add-command {
+  margin-left: 0.6em;
+}
+
+.commands-container .command {
   padding: 5px;
   border: 1px solid rgba(0,0,0,0);
   cursor: grab;
 }
 
-.commands-area .command.hovered {
+.commands-container .command.hovered {
   border: 1px solid #ccc;
   border-radius: 5px;
   background: rgba(180,180,220,0.2);
   color: #212121;
+}
+
+.commands-container .command-header:first-child:before {
+  content: "◆";
+  vertical-align: baseline;
+  margin-right: 0.4em;
+  font-size: 1.2em;
+}
+
+.commands-container .branch-title {
+  margin-left: 1.4em;
 }
 
 /* COMMAND MODELS LIST */

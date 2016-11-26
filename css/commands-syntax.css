@@ -1,0 +1,41 @@
+.commands-container {
+	font-size: 0.8em;
+}
+
+.commands-container .command-name {
+  color: #22c;
+}
+
+.commands-container .command-name:after {
+	content: ":";
+	margin-right: 0.3em;
+}
+
+.commands-container .text-constant:before,
+.commands-container .text-constant:after {
+	content: '"';
+}
+
+.commands-container .command-arguments {
+	font-size: 0.95em;
+  color: #77e;
+}
+
+.commands-container .number-constant,
+.commands-container .text-constant {
+  color: #e44;
+}
+
+.commands-container .var-id,
+.commands-container .switch-id,
+.commands-container .self-switch-name {
+  color: #5c5;
+}
+
+.commands-container .var-id:before {
+	content: "variable ";
+}
+
+.commands-container .switch-id:before {
+	content: "switch ";
+}

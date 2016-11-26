@@ -7,7 +7,7 @@ HtmlCreators.htmlFor = function(commands) {
     ul += HtmlCreators.htmlForOne(command);
   }
   ul += "</ul>";
-  ul += "<div class='add-command' data-collection-id='" + commands.id + "'><button>Add Command</button></div>"
+  ul += "<div class='add-command line' data-collection-id='" + commands.id + "'><button>Add Command</button></div>"
   return ul;
 }
 
@@ -20,46 +20,87 @@ HtmlCreators.htmlForOne = function(command) {
 
 HtmlCreators.ShowText = {
   htmlFor: function(command){
-    var html = 'Say: "' + command.text + '"';
+    var argsHtml = 'Say: ' + textConstantHtml(command.text);
     if(command.name) {
-      html = command.name + " s" + html.slice(1, html.length);
+      argsHtml = command.name + " s" + argsHtml.slice(1, argsHtml.length);
     }
-    return "<p class='command-header'>" + new Handlebars.SafeString(html) + "</p>";
+    var html = commandNameHtml("ShowText") + argumentsHtml(argsHtml);
+    return commandHeaderHtml(html)
   }
 };
 
 HtmlCreators.ControlVariables = {
   htmlFor: function(command){
-    var html = "";
+    var argsHtml = "";
     if(command.idsRange[1] - command.idsRange[0] > 0) {
-      html += "All variables between #" + command.idsRange[0]._format(4) + " ~ #" + command.idsRange[1]._format(4);
+      var varRange = variableNameHtml(command.idsRange[0]) + " ~ " + variableNameHtml(command.idsRange[1]);
+      argsHtml += varRange;
     } else {
-      html += "Variable #" + command.idsRange[0]._format(4);
+      var varChanging = variableNameHtml(command.idsRange[0]);
+      argsHtml += varChanging;
     }
-    html += " " + command.operator + " ";
+    argsHtml += " " + command.operator + " ";
 
     if(command.type === "Constant") {
-      html += command.value
+      argsHtml += numberHtml(command.value);
     } else if(command.type === "Variable") {
-      html += "variable #" + command.variableId._format(4);
+      argsHtml += variableNameHtml(command.variableId);
     } else if(command.type === "Random") {
-      html += "random value between " + command.min + " and " + command.max;
+      argsHtml += "random value between " + numberHtml(command.min) + " and " + numberHtml(command.max);
     }
-    return "<p class='command-header'>" + html + "</p>";
+    var html = commandNameHtml("ControlVariables") + argumentsHtml(argsHtml);
+    return commandHeaderHtml(html)
   }
 };
 
+function commandHeaderHtml(html) {
+  return "<p class='command-header line'>" + html + "</p>";
+}
+
+function numberHtml(value) {
+  return "<span class='number-constant constant'>" + value + "</span>";
+}
+
+function argumentsHtml(args) {
+  return "<span class='command-arguments'>" + args + "</span>";
+}
+
+function commandNameHtml(name) {
+  return "<span class='command-name'>" + name + "</span>";
+}
+
+function booleanHtml(bool) {
+  return "<span class='boolean-constant constant'>" + (bool === 0 ? "true" : "false") + "</span>";
+}
+
+function textConstantHtml(text) {
+  var text = new Handlebars.SafeString(text);
+  return "<span class='text-constant constant'>" + text + "</span>";
+}
+
+function variableNameHtml(varId) {
+  return "<span class='var-id'>#" + varId._format(4) + "</span>";
+}
+
+function switchNameHtml(switchId) {
+  return "<span class='switch-id'>#" + switchId._format(4) + "</span>";
+}
+
+function selfSwitchNameHtml(name) {
+  return "<span class='self-switch-name'>#" + name + "</span>";
+}
+
 HtmlCreators.ConditionalBranch = {
   htmlFor: function(command) {
-    var html = "<p class='command-header'>If " + this.htmlForCondition(command) + "</p>";
+    var html = commandHeaderHtml(commandNameHtml("ConditionalBranch") + argumentsHtml("If " + this.htmlForCondition(command) + " then"))
     html += "<ul class='branches'>";
     html += "<li class='branch'>";
-    html += "<p class='branch-title'>Then</p>";
+    //html += "<p class='branch-title'>" + argumentsHtml("Then") + "</p>";
     html += HtmlCreators.htmlFor(command.thenChildren);
     html += "</li>";
     if (command.elseChildren !== undefined) {
       html += "<li class='branch'>";
-      html += "<p class='branch-title'>Else</p>";
+      html += "<p class='branch-title line'>" + argumentsHtml("else") + "</p>";
       html += HtmlCreators.htmlFor(command.elseChildren);
       html += "</li>";
     }
@@ -68,24 +109,24 @@ HtmlCreators.ConditionalBranch = {
   },
   htmlForCondition: function(command) { 
     if(command.type === "Switch") {
-      return "switch #" + command.leftSwitch + " = " + (command.rightValue === 0 ? "true" : "false");
+      return switchNameHtml(command.leftSwitch) + " = " + booleanHtml(command.rightValue);
     } else if(command.type === "Variable") {
-      var html = "variable #" + command.left.variableId._format(4) + " " + command.operator + " ";
+      var html = variableNameHtml(command.left.variableId) + " " + command.operator + " ";
       if(command.right.type === "Constant") {
-        html += command.right.value;
+        html += numberHtml(command.right.value);
       } else {
-        html += "variable #" + command.right.variableId._format(4);
+        html += variableNameHtml(command.right.variableId);
       }
       return html;
     } else if(command.type === "SelfSwitch") {
       obj.type = "SelfSwitch";
-      return "self-switch #" + command.leftSwitch._format(4) + " = " + (command.rightValue === 0 ? "true" : "false");
+      return selfSwitchNameHtml(command.leftSwitch) + " = " + booleanHtml(command.rightValue);
     } else if(command.type === "Timer") {
-      return "timer " + command.operator + " " + obj.seconds + " seconds";
+      return "timer " + command.operator + " " + numberHtml(obj.seconds) + " seconds";
     }
   }
 };
 
 HtmlCreators.Default = {
-  htmlFor: function(command){return "<p class='command-header'>" + command.command + "</p>";}
+  htmlFor: commandHeaderHtml
 };
