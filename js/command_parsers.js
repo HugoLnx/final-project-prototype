@@ -22,8 +22,14 @@ CommandParsers.parseOne = function(commands, i) {
   var command = commands[i];
   var code2parser = {
     '101': 'ShowText',
+    '103': 'InputNumber',
+    '104': 'SelectItem',
+    '105': 'ShowScrollingText',
+    '111': 'ConditionalBranch',
+    '121': 'ControlSwitches',
     '122': 'ControlVariables',
-    '111': 'ConditionalBranch'
+    '123': 'ControlSelfSwitches',
+    '124': 'ControlTimer'
   };
   var moduleName = code2parser[command.code];
   console.log("".padStart(command.indent*2), command.code, moduleName);
@@ -46,6 +52,138 @@ CommandParsers.unparse = function(collection, indent) {
     "parameters": []
   });
   return commands;
+};
+
+CommandParsers.InputNumber = {
+  // 103
+  parse: function(commands, i) {
+    var params = commands[i].parameters;
+    var obj = Commands.build("InputNumber", {
+      variableId: params[0],
+      digits: params[1]
+    });
+    return {object: obj, nextI: i+1};
+  },
+  unparse: function(obj, indent) {
+    return [{
+      "code": 103,
+      "indent": indent,
+      "parameters": [obj.variableId, obj.digits]
+    }];
+  }
+};
+
+CommandParsers.SelectItem = {
+  // 104
+  parse: function(commands, i) {
+    var params = commands[i].parameters;
+    var obj = Commands.build("SelectItem", {
+      variableId: params[0],
+      type: params[1]
+    });
+    return {object: obj, nextI: i+1};
+  },
+  unparse: function(obj, indent) {
+    return [{
+      "code": 104,
+      "indent": indent,
+      "parameters": [obj.variableId, obj.type]
+    }];
+  }
+};
+
+CommandParsers.ShowScrollingText = {
+  // 105
+  parse: function(commands, i) {
+    var params = commands[i].parameters;
+    var nextParams = commands[i+1].parameters;
+
+    var obj = Commands.build("ShowScrollingText", {
+      speed: params[0],
+      blockFastForward: params[1],
+      text: nextParams[0]
+    });
+
+    return {object: obj, nextI: i+2};
+  },
+  unparse: function(obj, indent) {
+    return [
+      {
+        "code": 105,
+        "indent": indent,
+        "parameters": [obj.speed, obj.blockFastForward]
+      },
+      {
+        "code": 405,
+        "indent": indent,
+        "parameters": [obj.text]
+      }
+    ];
+  }
+};
+
+CommandParsers.ControlSwitches = {
+  // 121
+  parse: function(commands, i) {
+    var params = commands[i].parameters;
+
+    var obj = Commands.build("ControlSwitches", {
+      idsRange: [params[0], params[1]],
+      value: params[2] === 0
+    });
+
+    return {object: obj, nextI: i+1};
+  },
+  unparse: function(obj, indent) {
+    return [{
+      "code": 121,
+      "indent": indent,
+      "parameters": [obj.idsRange[0], obj.idsRange[1], obj.value ? 0 : 1]
+    }];
+  }
+};
+
+CommandParsers.ControlSelfSwitches = {
+  // 123
+  parse: function(commands, i) {
+    var params = commands[i].parameters;
+
+    var obj = Commands.build("ControlSelfSwitches", {
+      name: params[0],
+      value: params[1] === 0
+    });
+
+    return {object: obj, nextI: i+1};
+  },
+  unparse: function(obj, indent) {
+    return [{
+      "code": 123,
+      "indent": indent,
+      "parameters": [obj.name, obj.value ? 0 : 1]
+    }];
+  }
+};
+
+
+CommandParsers.ControlTimer = {
+  // 124
+  parse: function(commands, i) {
+    var params = commands[i].parameters;
+
+    var obj = Commands.build("ControlTimer", {
+      action: (params[0] === 0 ? "start" : "stop"),
+      seconds: params[1]
+    });
+
+    return {object: obj, nextI: i+1};
+  },
+  unparse: function(obj, indent) {
+    return [{
+      "code": 124,
+      "indent": indent,
+      "parameters": [(obj.action === "start" ? 0 : 1), obj.seconds]
+    }];
+  }
 };
 
 CommandParsers.ShowText = {
@@ -139,7 +277,7 @@ CommandParsers.ConditionalBranch = {
     case 0:  // Switch
         obj.type = "Switch";
         obj.leftSwitch = params[1];
-        obj.rightValue = params[2];
+        obj.rightValue = params[2] === 0;
         break;
     case 1:  // Variable
         obj.type = "Variable";
@@ -161,7 +299,7 @@ CommandParsers.ConditionalBranch = {
     case 2:  // Self Switch
         obj.type = "SelfSwitch";
         obj.leftSwitch = params[1];
-        obj.rightValue = params[2]
+        obj.rightValue = params[2] === 0;
         break;
     case 3:  // Timer
         obj.type = "Timer";
@@ -219,7 +357,7 @@ CommandParsers.ConditionalBranch = {
     var thenCommands = CommandParsers.unparse(obj.thenChildren, indent+1);
     Array.prototype.push.apply(commands, thenCommands);
 
-    if(obj.elseChildren.all.length > 0) {
+    if(obj.elseChildren && obj.elseChildren.all.length > 0) {
       commands.push({
         "code": 411,
         "indent": indent,

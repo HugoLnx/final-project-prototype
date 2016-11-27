@@ -21,8 +21,7 @@
   color: #77e;
 }
 
-.commands-container .number-constant,
-.commands-container .text-constant {
+.commands-container .constant {
   color: #e44;
 }
 

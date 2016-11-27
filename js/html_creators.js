@@ -70,7 +70,7 @@ function commandNameHtml(name) {
 }
 
 function booleanHtml(bool) {
-  return "<span class='boolean-constant constant'>" + (bool === 0 ? "true" : "false") + "</span>";
+  return "<span class='boolean-constant constant'>" + (bool ? "true" : "false") + "</span>";
 }
 
 function textConstantHtml(text) {
@@ -87,7 +87,7 @@ function switchNameHtml(switchId) {
 }
 
 function selfSwitchNameHtml(name) {
-  return "<span class='self-switch-name'>#" + name + "</span>";
+  return "<span class='self-switch-name'>" + name + "</span>";
 }
 
 HtmlCreators.ConditionalBranch = {
@@ -127,6 +127,60 @@ HtmlCreators.ConditionalBranch = {
   }
 };
 
+HtmlCreators.InputNumber = {
+  htmlFor: function(command) {
+    var argsHtml = argumentsHtml("store on " + variableNameHtml(command.variableId) + "; max of " + numberHtml(command.digits) + " digits");
+    return commandHeaderHtml(commandNameHtml("InputNumber") + argsHtml)
+  }
+};
+
+HtmlCreators.SelectItem = {
+  htmlFor: function(command) {
+    var argsHtml = argumentsHtml("store on " + variableNameHtml(command.variableId) + "; items type: " + numberHtml(command.type) + " digits");
+    return commandHeaderHtml(commandNameHtml("SelectItem") + argsHtml)
+  }
+};
+
+HtmlCreators.ShowScrollingText = {
+  htmlFor: function(command) {
+    var argsHtml = argumentsHtml("show " + textConstantHtml(command.text) + " at speed " + numberHtml(command.speed) + (command.blockFastForward ? "; block fast forward" : ""));
+    return commandHeaderHtml(commandNameHtml("ShowScrollingText") + argsHtml)
+  }
+};
+
+HtmlCreators.ControlSwitches = {
+  htmlFor: function(command) {
+    var argsHtml = "";
+    if(command.idsRange[1] - command.idsRange[0] > 0) {
+      var switchRange = switchNameHtml(command.idsRange[0]) + " ~ " + switchNameHtml(command.idsRange[1]);
+      argsHtml += switchRange;
+    } else {
+      var switchChanging = switchNameHtml(command.idsRange[0]);
+      argsHtml += switchChanging;
+    }
+    var argsHtml = argumentsHtml("set " + argsHtml + " to " + booleanHtml(command.value));
+    return commandHeaderHtml(commandNameHtml("ControlSwitches") + argsHtml)
+  }
+};
+
+HtmlCreators.ControlSelfSwitches = {
+  htmlFor: function(command) {
+    return commandHeaderHtml(commandNameHtml("ControlSelfSwitches") + argumentsHtml("set " + selfSwitchNameHtml(command.name) + " to " + booleanHtml(command.value)));
+  }
+};
+
+HtmlCreators.ControlTimer = {
+  htmlFor: function(command) {
+    var argsHtml = "";
+    if(command.action === "stop") {
+      argsHtml = "stop";
+    } else {
+      argsHtml = "start; duration: " + command.seconds + " seconds";
+    }
+    return commandHeaderHtml(commandNameHtml("ControlTimer") + argumentsHtml(argsHtml));
+  }
+};
+
 HtmlCreators.Default = {
-  htmlFor: commandHeaderHtml
+  htmlFor: function(command) { return commandHeaderHtml(command.command); }
 };
