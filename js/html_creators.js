@@ -20,11 +20,11 @@ HtmlCreators.htmlForOne = function(command) {
 
 HtmlCreators.ShowText = {
   htmlFor: function(command){
-    var argsHtml = 'Say: ' + textConstantHtml(command.text);
+    var argsHtml = 'Say ' + textConstantHtml(command.text);
     if(command.name) {
       argsHtml = command.name + " s" + argsHtml.slice(1, argsHtml.length);
     }
-    var html = commandNameHtml("ShowText") + argumentsHtml(argsHtml);
+    var html = commandNameHtml("Show text") + argumentsHtml(argsHtml);
     return commandHeaderHtml(html)
   }
 };
@@ -48,7 +48,7 @@ HtmlCreators.ControlVariables = {
     } else if(command.type === "Random") {
       argsHtml += "random value between " + numberHtml(command.min) + " and " + numberHtml(command.max);
     }
-    var html = commandNameHtml("ControlVariables") + argumentsHtml(argsHtml);
+    var html = commandNameHtml("Control variables") + argumentsHtml(argsHtml);
     return commandHeaderHtml(html)
   }
 };
@@ -90,9 +90,33 @@ function selfSwitchNameHtml(name) {
   return "<span class='self-switch-name'>" + name + "</span>";
 }
 
+function commonEventHtml(eventId) {
+  return "<span class='common-event-id'>#" + eventId._format(4) + "</span>";
+}
+
+function labelHtml(name) {
+  return "<span class='label-name'>" + name + "</span>";
+}
+
+HtmlCreators.ShowChoices = {
+  htmlFor: function(command) {
+    var html = commandHeaderHtml(commandNameHtml("Show choices") + argumentsHtml(command.choices.join(", ")))
+    html += "<ul class='branches'>";
+    for(var i = 0; i<command.choices.length; i++) {
+      var choice = command.choices[i];
+      html += "<li class='branch'>";
+      html += "<p class='branch-title line'>" + commandNameHtml("When " + textConstantHtml(choice)) + "</p>";
+      html += HtmlCreators.htmlFor(command.choicesChildren[choice]);
+      html += "</li>";
+    }
+    html += "</ul>"
+    return html;
+  }
+};
+
 HtmlCreators.ConditionalBranch = {
   htmlFor: function(command) {
-    var html = commandHeaderHtml(commandNameHtml("ConditionalBranch") + argumentsHtml("If " + this.htmlForCondition(command) + " then"))
+    var html = commandHeaderHtml(commandNameHtml("Conditional branch") + argumentsHtml("If " + this.htmlForCondition(command) + " then"))
     html += "<ul class='branches'>";
     html += "<li class='branch'>";
     //html += "<p class='branch-title'>" + argumentsHtml("Then") + "</p>";
@@ -100,7 +124,7 @@ HtmlCreators.ConditionalBranch = {
     html += "</li>";
     if (command.elseChildren !== undefined) {
       html += "<li class='branch'>";
-      html += "<p class='branch-title line'>" + argumentsHtml("else") + "</p>";
+      html += "<p class='branch-title line'>" + commandNameHtml("Else") + "</p>";
       html += HtmlCreators.htmlFor(command.elseChildren);
       html += "</li>";
     }
@@ -127,24 +151,64 @@ HtmlCreators.ConditionalBranch = {
   }
 };
 
+HtmlCreators.Loop = {
+  htmlFor: function(command) {
+    var html = commandHeaderHtml(commandNameHtml("Loop"))
+    html += "<div class='branch'>";
+    html += HtmlCreators.htmlFor(command.children);
+    html += "</div>";
+    return html;
+  }
+};
+
+HtmlCreators.BreakLoop = {
+  htmlFor: function(command) {
+    return commandHeaderHtml(commandNameHtml("Break loop"))
+  }
+};
+
+HtmlCreators.ExitEventProcessing = {
+  htmlFor: function(command) {
+    return commandHeaderHtml(commandNameHtml("Exit event processing"))
+  }
+};
+
+HtmlCreators.CommonEvent = {
+  htmlFor: function(command) {
+    return commandHeaderHtml(commandNameHtml("Common event") + argumentsHtml("execute " + commonEventHtml(command.eventId)))
+  }
+};
+
+HtmlCreators.Label = {
+  htmlFor: function(command) {
+    return commandHeaderHtml(commandNameHtml("Label") + argumentsHtml("create " + labelHtml(command.name)))
+  }
+};
+
+HtmlCreators.JumpToLabel = {
+  htmlFor: function(command) {
+    return commandHeaderHtml(commandNameHtml("Jump to label") + argumentsHtml(labelHtml(command.name)))
+  }
+};
+
 HtmlCreators.InputNumber = {
   htmlFor: function(command) {
     var argsHtml = argumentsHtml("store on " + variableNameHtml(command.variableId) + "; max of " + numberHtml(command.digits) + " digits");
-    return commandHeaderHtml(commandNameHtml("InputNumber") + argsHtml)
+    return commandHeaderHtml(commandNameHtml("Input number") + argsHtml)
   }
 };
 
 HtmlCreators.SelectItem = {
   htmlFor: function(command) {
     var argsHtml = argumentsHtml("store on " + variableNameHtml(command.variableId) + "; items type: " + numberHtml(command.type) + " digits");
-    return commandHeaderHtml(commandNameHtml("SelectItem") + argsHtml)
+    return commandHeaderHtml(commandNameHtml("Select item") + argsHtml)
   }
 };
 
 HtmlCreators.ShowScrollingText = {
   htmlFor: function(command) {
     var argsHtml = argumentsHtml("show " + textConstantHtml(command.text) + " at speed " + numberHtml(command.speed) + (command.blockFastForward ? "; block fast forward" : ""));
-    return commandHeaderHtml(commandNameHtml("ShowScrollingText") + argsHtml)
+    return commandHeaderHtml(commandNameHtml("Show scrolling text") + argsHtml)
   }
 };
 
@@ -159,13 +223,13 @@ HtmlCreators.ControlSwitches = {
       argsHtml += switchChanging;
     }
     var argsHtml = argumentsHtml("set " + argsHtml + " to " + booleanHtml(command.value));
-    return commandHeaderHtml(commandNameHtml("ControlSwitches") + argsHtml)
+    return commandHeaderHtml(commandNameHtml("Control switches") + argsHtml)
   }
 };
 
 HtmlCreators.ControlSelfSwitches = {
   htmlFor: function(command) {
-    return commandHeaderHtml(commandNameHtml("ControlSelfSwitches") + argumentsHtml("set " + selfSwitchNameHtml(command.name) + " to " + booleanHtml(command.value)));
+    return commandHeaderHtml(commandNameHtml("Control self-switches") + argumentsHtml("set " + selfSwitchNameHtml(command.name) + " to " + booleanHtml(command.value)));
   }
 };
 
@@ -177,7 +241,7 @@ HtmlCreators.ControlTimer = {
     } else {
       argsHtml = "start; duration: " + command.seconds + " seconds";
     }
-    return commandHeaderHtml(commandNameHtml("ControlTimer") + argumentsHtml(argsHtml));
+    return commandHeaderHtml(commandNameHtml("Control timer") + argumentsHtml(argsHtml));
   }
 };
 

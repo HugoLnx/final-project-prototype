@@ -22,10 +22,17 @@ CommandParsers.parseOne = function(commands, i) {
   var command = commands[i];
   var code2parser = {
     '101': 'ShowText',
+    '102': 'ShowChoices',
     '103': 'InputNumber',
     '104': 'SelectItem',
     '105': 'ShowScrollingText',
     '111': 'ConditionalBranch',
+    '112': 'Loop',
+    '113': 'BreakLoop',
+    '115': 'ExitEventProcessing',
+    '117': 'CommonEvent',
+    '118': 'Label',
+    '119': 'JumpToLabel',
     '121': 'ControlSwitches',
     '122': 'ControlVariables',
     '123': 'ControlSelfSwitches',
@@ -52,6 +59,116 @@ CommandParsers.unparse = function(collection, indent) {
     "parameters": []
   });
   return commands;
+};
+
+CommandParsers.Loop = {
+  // 112
+  parse: function(commands, i) {
+    var params = commands[i].parameters;
+    var obj = Commands.build("Loop", {});
+    var resp = CommandParsers.parse(commands, i+1);
+    obj.children = resp.commands;
+    return {object: obj, nextI: resp.nextI+1};
+  },
+  unparse: function(obj, indent) {
+    var commands = [{
+      "code": 112,
+      "indent": indent,
+      "parameters": []
+    }];
+    var innerCommands = CommandParsers.unparse(obj.children, indent+1);
+    Array.prototype.push.apply(commands, innerCommands);
+    commands.push({
+      "code": 413,
+      "indent": indent,
+      "parameters": []
+    });
+    return commands;
+  }
+};
+
+CommandParsers.BreakLoop = {
+  // 113
+  parse: function(commands, i) {
+    var obj = Commands.build("BreakLoop", {});
+    return {object: obj, nextI: i+1};
+  },
+  unparse: function(obj, indent) {
+    return [{
+      "code": 113,
+      "indent": indent,
+      "parameters": []
+    }];
+  }
+};
+
+CommandParsers.ExitEventProcessing = {
+  // 115
+  parse: function(commands, i) {
+    var obj = Commands.build("ExitEventProcessing", {});
+    return {object: obj, nextI: i+1};
+  },
+  unparse: function(obj, indent) {
+    return [{
+      "code": 115,
+      "indent": indent,
+      "parameters": []
+    }];
+  }
+};
+
+CommandParsers.CommonEvent = {
+  // 117
+  parse: function(commands, i) {
+    var params = commands[i].parameters;
+    var obj = Commands.build("CommonEvent", {
+      eventId: params[0]
+    });
+    return {object: obj, nextI: i+1};
+  },
+  unparse: function(obj, indent) {
+    return [{
+      "code": 117,
+      "indent": indent,
+      "parameters": [obj.eventId]
+    }];
+  }
+};
+
+CommandParsers.Label = {
+  // 118
+  parse: function(commands, i) {
+    var params = commands[i].parameters;
+    var obj = Commands.build("Label", {
+      name: params[0]
+    });
+    return {object: obj, nextI: i+1};
+  },
+  unparse: function(obj, indent) {
+    return [{
+      "code": 118,
+      "indent": indent,
+      "parameters": [obj.name]
+    }];
+  }
+};
+
+CommandParsers.JumpToLabel = {
+  // 119
+  parse: function(commands, i) {
+    var params = commands[i].parameters;
+    var obj = Commands.build("JumpToLabel", {
+      name: params[0]
+    });
+    return {object: obj, nextI: i+1};
+  },
+  unparse: function(obj, indent) {
+    return [{
+      "code": 119,
+      "indent": indent,
+      "parameters": [obj.name]
+    }];
+  }
 };
 
 CommandParsers.InputNumber = {
@@ -189,15 +306,23 @@ CommandParsers.ControlTimer = {
 CommandParsers.ShowText = {
   parse: function(commands, i) {
     var nextCommand = commands[i+1];
-    var text = nextCommand.parameters[0];
-    var match = text.match(/^([^:]*)\s*:\s*(.*)$/)
+    var firstLine = nextCommand.parameters[0];
+    var match = firstLine.match(/^([^:]*)\s*:\s*(.*)$/);
+    var name = (match ? match[1] : null);
+    var text = (match ? match[2] : firstLine);
+
+    var nextI = i+2;
+    while(commands[nextI].code === 401) {
+      text += "\n" + commands[nextI].parameters[0];
+      nextI++;
+    }
 
     var obj = Commands.build("ShowText", {
-      name: (match ? match[1] : null),
-      text: (match ? match[2] : text)
+      name: name,
+      text: text
     });
 
-    return {object: obj, nextI: i + 2};
+    return {object: obj, nextI: nextI};
   },
   unparse: function(obj, indent) {
     var commands = [];
@@ -206,13 +331,24 @@ CommandParsers.ShowText = {
       "indent": indent,
       "parameters": ["", 0, 0, 2]
     });
+
+    var lines = obj.text.split("\n");
     commands.push({
       "code": 401,
       "indent": indent,
       "parameters": [
-        (obj.name ? obj.name + ": " : "") + obj.text
+        (obj.name ? obj.name + ": " : "") + lines[0]
       ]
     });
+    for(var i = 1; i<lines.length; i++) {
+      var line = lines[i];
+
+      commands.push({
+        "code": 401,
+        "indent": indent,
+        "parameters": [ lines[i] ]
+      });
+    }
     return commands;
   }
 };
@@ -265,6 +401,56 @@ CommandParsers.ControlVariables = {
       params[5] = obj.max;
     }
     return [{code: code, parameters: params, indent: indent}];
+  }
+};
+
+
+CommandParsers.ShowChoices = {
+  parse: function(commands, i) {
+    var params = commands[i].parameters;
+    var choices = params[0]._clone();
+
+    var obj = Commands.build("ShowChoices", {
+      choices: choices,
+      choicesChildren: {}
+    });
+
+    var nextI = i + 2;
+    for(var i = 0; i<choices.length; i++) {
+      var choice = choices[i];
+      var resp = CommandParsers.parse(commands, nextI)
+      obj.choicesChildren[choice] = resp.commands;
+      nextI = resp.nextI + 1;
+    }
+
+    return {object: obj, nextI: nextI};
+  },
+  unparse: function(obj, indent) {
+    var commands = [];
+    commands.push({
+      "code": 102,
+      "indent": indent,
+      "parameters": [obj.choices._clone(), -1, 0, 2, 0]
+    });
+
+    for(var i = 0; i<obj.choices.length; i++) {
+      var choice = obj.choices[i];
+      commands.push({
+        "code": 402,
+        "indent": indent,
+        "parameters": [i, choice]
+      });
+      var choiceCommands = CommandParsers.unparse(
+          obj.choicesChildren[choice], indent+1);
+      Array.prototype.push.apply(commands, choiceCommands);
+    }
+    commands.push({
+      "code": 404,
+      "indent": indent,
+      "parameters": []
+    });
+
+    return commands;
   }
 };
 

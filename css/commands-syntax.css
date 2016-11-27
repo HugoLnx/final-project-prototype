@@ -6,11 +6,6 @@
   color: #22c;
 }
 
-.commands-container .command-name:after {
-	content: ":";
-	margin-right: 0.3em;
-}
-
 .commands-container .text-constant:before,
 .commands-container .text-constant:after {
 	content: '"';
@@ -19,6 +14,15 @@
 .commands-container .command-arguments {
 	font-size: 0.95em;
   color: #77e;
+  margin-right: 0.3em;
+}
+
+.commands-container .command-arguments:before {
+  content: ":";
+}
+
+.commands-container .branch-title .command-arguments:before {
+  content: "";
 }
 
 .commands-container .constant {
@@ -27,7 +31,9 @@
 
 .commands-container .var-id,
 .commands-container .switch-id,
-.commands-container .self-switch-name {
+.commands-container .self-switch-name,
+.commands-container .common-event-id,
+.commands-container .label-name {
   color: #5c5;
 }
 
@@ -37,4 +43,12 @@
 
 .commands-container .switch-id:before {
 	content: "switch ";
+}
+
+.commands-container .common-event-id:before {
+	content: "common event ";
+}
+
+.commands-container .label-name:before {
+	content: "label ";
 }

@@ -14,7 +14,7 @@ var EventDialog = {
       autoOpen: false,
       modal: true,
       resizable: false,
-      width: 900
+      width: 1200
     });
   },
   openFor: function(ev) {

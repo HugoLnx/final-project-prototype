@@ -22,6 +22,10 @@ Array.prototype._removeIf = function(condition) {
   }
 };
 
+Array.prototype._clone = function() {
+  return Array.apply(null, this);
+};
+
 Number.prototype._format = function(minIntegerDigits) {
   var str = this+"";
   while(str.length < minIntegerDigits) {
